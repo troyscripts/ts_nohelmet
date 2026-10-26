@@ -61,17 +61,6 @@ Weer inschakelen: verander `0` naar `1` en herstart de resource. Gebruik `set`, 
 
 Consolemeldingen kunnen aangeven dat de versie actueel is, dat er een update beschikbaar is, of dat de lokale versie vooruitloopt op de gepubliceerde release. Bij een onbereikbare API, een HTTP-fout of ongeldige gegevens wordt alleen een melding geschreven. Na 15 seconden stopt de checker met wachten op een bruikbaar resultaat; een late reactie wordt genegeerd. Er volgt geen herhaalde polling.
 
-### Releases publiceren als beheerder
-
-1. Neem de goedgekeurde releasebestanden op in `main`.
-2. Controleer dat `fxmanifest.lua` de bedoelde versie bevat, voor deze release `1.0.1`.
-3. Zorg dat de repository openbaar is als gebruikers de ingebouwde checker moeten kunnen gebruiken. Een privérepository geeft zonder authenticatie doorgaans HTTP 404.
-4. Maak via GitHub Releases een release met tag `v1.0.1` op de juiste commit. Gebruik voor volgende versies bijvoorbeeld `v1.0.2`; ook `1.0.2` zonder `v` is toegestaan.
-5. Publiceer als stabiele release, niet als draft of prerelease, en wijs de bedoelde nieuwste stabiele release aan als latest.
-6. Controleer na een resource-herstart of de server de versie als actueel meldt.
-
-Alleen een commit of tag maken is onvoldoende: de checker gebruikt **GitHub Releases**, niet de versie op `main`. Bewaar geen GitHub-token in deze resource. Als de code privé moet blijven, schakel de checker uit; een aparte publieke versiebron vereist een aanpassing van de checker.
-
 ## 6. Updaten
 
 1. Maak een back-up van de bestaande resource en eventuele eigen wijzigingen.

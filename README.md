@@ -39,7 +39,7 @@ ensure ts_nohelmet
 
 5. Herstart de server, of voer `refresh` en daarna `ensure ts_nohelmet` uit in de serverconsole.
 
-Zie **[de volledige installatiehandleiding](docs/INSTALLATIE.md)** voor updaten, controle, probleemoplossing en het publiceren van releases.
+Zie **[de volledige installatiehandleiding](docs/INSTALLATIE.md)** voor updaten, controle en probleemoplossing.
 
 ## Versiecontrole
 
