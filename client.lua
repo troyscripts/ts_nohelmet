@@ -26,14 +26,24 @@ local function eligibility()
     if exports.ts_bridge:IsDead(ped) then return nil, nil, Config.Messages.Dead end
     local vehicle = GetVehiclePedIsIn(ped, false)
     if vehicle == 0 then return nil, nil, Config.Messages.NotInVehicle end
-    if not IsPedInAnyVehicle(ped, false) or IsPedGettingIntoAVehicle(ped)
-        or GetIsTaskActive(ped, 2) then return nil, nil, Config.Messages.Unavailable end
-    if GetPedInVehicleSeat(vehicle, -1) == ped then return nil, nil, Config.Messages.Driver end
-    if GetPedInVehicleSeat(vehicle, 0) ~= ped then return nil, nil, Config.Messages.FrontPassenger end
-    -- Ook een dode bestuurder houdt de stoel bezet; niemand wordt verwijderd.
-    if not IsVehicleSeatFree(vehicle, -1, true) then return nil, nil, Config.Messages.Occupied end
-    if not CanShuffleSeat(vehicle, ped) then return nil, nil, Config.Messages.Unavailable end
-    return ped, vehicle
+    if not IsPedInAnyVehicle(ped, false) or IsPedGettingIntoAVehicle(ped) then
+        return nil, nil, Config.Messages.Unavailable
+    end
+    local targetSeat
+    if GetPedInVehicleSeat(vehicle, -1) == ped then
+        targetSeat = 0
+    elseif GetPedInVehicleSeat(vehicle, 0) == ped then
+        targetSeat = -1
+    else
+        return nil, nil, Config.Messages.FrontPassenger
+    end
+    -- Ook een dode inzittende houdt de doelstoel bezet; niemand wordt verwijderd.
+    if not IsVehicleSeatFree(vehicle, targetSeat, true) then
+        return nil, nil, Config.Messages.Occupied
+    end
+    -- Laat de native de animatie proberen. CanShuffleSeat is hier geen betrouwbare
+    -- toelatingscontrole; een niet-ondersteunde animatie wordt door de time-out begrensd.
+    return ped, vehicle, nil, targetSeat
 end
 local function finishShuffle(cancel)
     local state = active
@@ -48,10 +58,10 @@ local function finishShuffle(cancel)
 end
 local function shuffle()
     if active then notify(Config.Messages.Busy); return end
-    local ped, vehicle, reason = eligibility()
+    local ped, vehicle, reason, targetSeat = eligibility()
     if not ped then notify(reason); return end
     trackPed(ped)
-    active = { ped = ped, vehicle = vehicle, started = GetGameTimer() }
+    active = { ped = ped, vehicle = vehicle, targetSeat = targetSeat, started = GetGameTimer() }
     SetPedConfigFlag(ped, flag, false)
     TaskShuffleToNextVehicleSeat(ped, vehicle, false)
 end
@@ -84,11 +94,10 @@ CreateThread(function()
         if active then
             local state = active
             local sameVehicle = ped == state.ped and GetVehiclePedIsIn(ped, false) == state.vehicle
-            if sameVehicle and GetPedInVehicleSeat(state.vehicle, -1) == ped then
+            if sameVehicle and GetPedInVehicleSeat(state.vehicle, state.targetSeat) == ped then
                 finishShuffle(false)
             elseif not sameVehicle or not bridgeReady() or exports.ts_bridge:IsDead(ped)
-                or (GetPedInVehicleSeat(state.vehicle, -1) ~= 0 and GetPedInVehicleSeat(state.vehicle, -1) ~= ped)
-                or GetIsTaskActive(ped, 2)
+                or (GetPedInVehicleSeat(state.vehicle, state.targetSeat) ~= 0 and GetPedInVehicleSeat(state.vehicle, state.targetSeat) ~= ped)
                 or GetGameTimer() - state.started >= Config.ShuffleTimeoutMs then
                 finishShuffle(true)
                 notify(Config.Messages.Failed)
@@ -97,7 +106,11 @@ CreateThread(function()
         trackPed(ped)
         if trackedPed then
             if Config.DisableAutomaticHelmet then SetPedHelmet(ped, false) end
-            if Config.PreventAutoShuffle and not active then SetPedConfigFlag(ped, flag, true) end
+            if active then
+                SetPedConfigFlag(ped, flag, false)
+            elseif Config.PreventAutoShuffle then
+                SetPedConfigFlag(ped, flag, true)
+            end
         end
         local eligible = false
         if Config.Radial.Enabled and not active and bridgeReady() then eligible = eligibility() ~= nil end

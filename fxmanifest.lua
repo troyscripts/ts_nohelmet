@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Troy Scripts'
 description 'Geen automatische helm of stoelwissel; handmatig schuiven via command en radiaalmenu.'
-version '1.0.2'
+version '1.0.4'
 
 client_scripts { 'config/config.lua', 'client.lua' }
 dependency 'ts_bridge'

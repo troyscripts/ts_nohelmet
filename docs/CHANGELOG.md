@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.4
+
+- `/schuif` en radiaaloptie werken in beide richtingen tussen de twee voorstoelen.
+- Doelstoel wordt per poging vastgelegd en op bezetting gecontroleerd.
+- Voorafgaande CanShuffleSeat- en generieke taakindex-2-blokkeringen verwijderd; de native voert de poging uit met een begrensde time-out.
+- Automatische stoelblokkering wordt direct hersteld na terugschuiven.
+- Configteksten en gebruikersdocumentatie aangepast voor beide richtingen.
+- Bridge 1.0.9 blijft bruikbaar.
+
+
+## 1.0.3
+
+- Fout in de stoelcontrole opgelost: `CanShuffleSeat` ontvangt nu stoelindex 0 in plaats van het ped-ID.
+- Herstelt onterechte blokkering van `/schuif` en de radiaaloptie.
+- Bridge 1.0.9 en bestaande configuratie blijven bruikbaar.
+
+
 ## 1.0.2
 
 - Automatische stoelwissel naar de bestuurder geblokkeerd.
