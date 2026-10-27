@@ -1,73 +1,72 @@
 # Troy Scripts — ts_nohelmet
 
-**Versie 1.0.1** · Standalone FiveM-resource voor GTA V
+**Versie 1.0.2** · FiveM voor GTA V
 
-Voorkom dat GTA V automatisch een motorhelm opzet wanneer een speler op een motor of scooter stapt. Handig voor roleplayservers waarop spelers hun eigen kleding en hoofddeksels kiezen.
+Voorkomt de automatische motorhelm én het automatisch doorschuiven naar de bestuurdersstoel wanneer de bestuurder uitstapt of overlijdt. Passagiers blijven op hun eigen plek. Wil je zelf rijden? Gebruik **`/schuif`** of **Schuif naar bestuurder** in het ox_lib-radiaalmenu, gekoppeld via ts_bridge.
 
-## Wat doet het script?
+## Functies
 
-- Schakelt de automatische helmfunctie uit voor de lokale speler.
-- Past dit elke seconde opnieuw toe op de huidige speler-ped, ook na een personagewissel of respawn.
-- Werkt zonder commands, menu's of database.
-- Controleert bij iedere resource-start één keer server-side op een nieuwe stabiele GitHub-release.
+- Automatische GTA-motorhelm uitschakelen; bestaande kleding blijft behouden.
+- Automatisch doorschuiven naar de bestuurdersstoel blokkeren.
+- Handmatig met de GTA-animatie van de voorste passagiersstoel naar de vrije bestuurdersstoel schuiven.
+- De radiaaloptie verschijnt alleen wanneer schuiven beschikbaar is.
+- Controle op overlijden/laststand via ts_bridge, bezette stoel en instappen; maximaal één schuifpoging tegelijk.
+- Versiechecker: controleert één keer bij de resource-start op een nieuwe stabiele GitHub-release. Geen automatische installatie.
 
-Het script verwijdert geen bestaande helm of kledingaccessoires. Het blokkeert ook geen helm die een ander script expliciet aantrekt. De bestaande clientwerking blijft in 1.0.1 gelijk.
+Een dode bestuurder die nog in de stoel zit houdt deze bezet. Het script verwijdert of verplaatst geen andere spelers. Achterpassagiers kunnen niet met `/schuif` naar voren teleporteren. Het script geeft geen voertuigsleutels en verandert geen voertuigtoegang.
 
-## Wat heb je nodig?
+## Vereisten
 
-| Onderdeel | Vereist? |
+| Onderdeel | Vereist |
 | --- | --- |
 | Werkende FiveM-server voor GTA V met actuele FXServer-artifacts | Ja |
-| Toegang tot `resources` en `server.cfg` of je resources-config | Ja |
-| ESX / QBCore | Nee, werkt standalone en naast beide frameworks |
-| ox_lib / ox_inventory / ts_bridge | Nee |
-| Database / SQL / extra npm-packages | Nee |
-| Uitgaand HTTPS-verkeer naar `api.github.com` | Alleen voor de versiecontrole |
+| ts_bridge 1.0.9 of nieuwer | Ja, resource-map moet `ts_bridge` heten |
+| ox_lib | Ja, voor ts_bridge en het radiaalmenu |
+| ESX / QBCore | Niet direct door ts_nohelmet; de bridge moet passend geconfigureerd zijn |
+| ox_target / ox_inventory / SQL | Geen directe dependency van ts_nohelmet |
+| Uitgaand HTTPS naar api.github.com | Alleen voor de versiechecker |
 
-Dit is een serverresource met clientcode: installeer hem op je FiveM-server, niet in de GTA V-map van spelers. De server levert de clientcode aan aangesloten spelers. Alleen de versiechecker draait op de server.
+De standaardconfiguratie van ts_bridge bevat ESX- en andere integraties. Gebruik de bestaande bridgeconfiguratie van je server; zet ongebruikte modules passend uit op een standalone server. Zie de bridgehandleiding.
 
-## Snel installeren
+## Installeren
 
-1. Download de [laatste release](https://github.com/troyscripts/ts_nohelmet/releases).
-2. Pak de resource uit naar `resources/[standalone]/ts_nohelmet`.
-3. Zorg dat `fxmanifest.lua` direct in `ts_nohelmet` staat.
-4. Voeg aan je `server.cfg` of ingeladen resources-config toe:
+1. Installeer ox_lib en de bijgewerkte ts_bridge.
+2. Pak de map `ts_nohelmet` uit in je serverresources.
+3. Controleer `config/config.lua` en zet de startvolgorde in je serverconfig:
 
 ```cfg
+ensure ox_lib
+ensure ts_bridge
 ensure ts_nohelmet
 ```
 
-5. Herstart de server, of voer `refresh` en daarna `ensure ts_nohelmet` uit in de serverconsole.
+De standaardtoets voor het ox_lib-radiaalmenu is doorgaans `Z`; een eigen keybinding kan daarvan afwijken. Gebruik het bestaande ox_lib-menu op je server. Koppeling met een ander radiaalmenu is niet inbegrepen.
 
-Zie **[de volledige installatiehandleiding](docs/INSTALLATIE.md)** voor updaten, controle en probleemoplossing.
+**[Volledige installatiehandleiding](docs/INSTALLATIE.md)** · **[Changelog](docs/CHANGELOG.md)**
 
-## Versiecontrole
+## Instellingen
 
-De checker vergelijkt de manifestversie met de tag van de laatste stabiele GitHub-release. Updates worden alleen gemeld in de serverconsole; er worden geen bestanden automatisch gedownload of uitgevoerd. Drafts en prereleases worden niet gebruikt.
+Alle gameplay-instellingen, het command, de menutekst en meldingen staan in `config/config.lua`. De automatische helm en stoelblokkering zijn afzonderlijk aan/uit te zetten. `/schuif` en het radiaalmenu zijn ook afzonderlijk uit te schakelen.
 
-De repository en de release moeten publiek bereikbaar zijn. Bij een privérepository, ontbrekende release, netwerkfout of GitHub-limiet blijft de helmfunctie gewoon werken. Er is geen GitHub-token nodig en er worden geen spelergegevens meegestuurd.
-
-Optioneel uitschakelen, **boven** `ensure ts_nohelmet`:
+De versiecheck kan via de serverconfig worden uitgezet, boven `ensure ts_nohelmet`:
 
 ```cfg
 set ts_nohelmet_version_check 0
-ensure ts_nohelmet
 ```
 
-Standaard is de controle ingeschakeld (`1`). Herstart de resource na een wijziging.
+Zonder bereikbare publieke GitHub-release meldt de checker dit in de serverconsole; de gameplay blijft werken.
 
 ## Bestanden
 
 | Bestand | Functie |
 | --- | --- |
-| `fxmanifest.lua` | Resourcegegevens en versienummer |
-| `client.lua` | Automatische helm uitschakelen |
-| `server/version_check.lua` | Controle op nieuwe releases |
-| `docs/INSTALLATIE.md` | Uitgebreide installatie en beheer |
-| `docs/CHANGELOG.md` | Wijzigingen per versie |
+| `fxmanifest.lua` | Versie, scripts en bridge-dependency |
+| `config/config.lua` | Gameplay, command, radiaaloptie en teksten |
+| `client.lua` | Helm, stoelblokkering en handmatig schuiven |
+| `server/version_check.lua` | Versiecontrole |
+| `docs/INSTALLATIE.md` | Installeren, updaten en controleren |
+| `docs/CHANGELOG.md` | Versiegeschiedenis |
 
-## Ondersteuning
+Andere scripts die de helm of ped-configflag 184 overschrijven of stoelwissels afdwingen kunnen conflicteren. Gebruik één script voor deze automatische stoelblokkering.
 
-Meld problemen via [GitHub Issues](https://github.com/troyscripts/ts_nohelmet/issues). Vermeld je scriptversie, de consolemelding en eventuele kleding- of helmscripts die tegelijk draaien.
-
-[Changelog bekijken](docs/CHANGELOG.md)
+Problemen melden: [GitHub Issues](https://github.com/troyscripts/ts_nohelmet/issues). Vermeld beide scriptversies en de relevante consolemelding.

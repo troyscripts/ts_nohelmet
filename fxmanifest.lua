@@ -2,8 +2,10 @@ fx_version 'cerulean'
 game 'gta5'
 
 author 'Troy Scripts'
-description 'Schakelt de automatische GTA V-motorhelm uit.'
-version '1.0.1'
+description 'Geen automatische helm of stoelwissel; handmatig schuiven via command en radiaalmenu.'
+version '1.0.2'
 
-client_script 'client.lua'
+client_scripts { 'config/config.lua', 'client.lua' }
+dependency 'ts_bridge'
 server_script 'server/version_check.lua'
+

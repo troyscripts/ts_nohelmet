@@ -1,90 +1,80 @@
-# Installatie — ts_nohelmet 1.0.1
+# Installatie — ts_nohelmet 1.0.2
 
-## 1. Vereisten
+## Benodigd
 
-Gebruik een werkende FiveM-server voor GTA V met actuele FXServer-artifacts. Je hebt toegang nodig tot de resources en de serverconfiguratie. ESX, QBCore, ox_lib, ts_bridge en een database zijn niet nodig.
+FiveM voor GTA V, ox_lib en **ts_bridge 1.0.9 of nieuwer**. Installeer de bridge onder de resourcenaam `ts_bridge`, ook al heet de GitHub-repository `ts_brigde`. ts_nohelmet heeft zelf geen ESX-, inventory- of databasekoppeling. Houd voor de overige bridgefuncties de bestaande serverinstellingen aan.
 
-Alleen de optionele versiechecker heeft uitgaand HTTPS-verkeer naar `api.github.com` nodig. De clientfunctie werkt ook wanneer GitHub onbereikbaar is.
+## Installeren / bijwerken
 
-## 2. Download en plaatsing
-
-Download het pakket via [GitHub Releases](https://github.com/troyscripts/ts_nohelmet/releases). Pak het uit en noem de resource-map exact `ts_nohelmet`. Een GitHub-broncodearchief kan een mapnaam zoals `ts_nohelmet-1.0.1` hebben; hernoem die.
-
-Plaats de map bijvoorbeeld onder `resources/[standalone]/ts_nohelmet`. Controleer deze paden:
-
-- `resources/[standalone]/ts_nohelmet/fxmanifest.lua`
-- `resources/[standalone]/ts_nohelmet/client.lua`
-- `resources/[standalone]/ts_nohelmet/server/version_check.lua`
-- `resources/[standalone]/ts_nohelmet/README.md`
-- `resources/[standalone]/ts_nohelmet/docs/CHANGELOG.md`
-- `resources/[standalone]/ts_nohelmet/docs/INSTALLATIE.md`
-
-Voorkom een dubbele map zoals `ts_nohelmet/ts_nohelmet/fxmanifest.lua`.
-
-## 3. Starten
-
-Voeg het volgende één keer toe aan `server.cfg`, of aan een resources-config die via `exec` wordt geladen:
+1. Maak een back-up van beide resources en je eigen bridgeconfiguratie/webhooks.
+2. Stop `ts_nohelmet`.
+3. Installeer eerst de bridge-update. Het bridgeconfigschema blijft **0.0.8**; de bestanden in `config/` zijn niet gewijzigd en kunnen behouden blijven.
+4. Vervang ts_nohelmet door versie 1.0.2, inclusief de nieuwe map `config`.
+5. Pas zo nodig `ts_nohelmet/config/config.lua` aan.
+6. Start resources in deze volgorde:
 
 ```cfg
+ensure ox_lib
+ensure ts_bridge
 ensure ts_nohelmet
 ```
 
-Er is geen framework-afhankelijke startvolgorde. Herstart de server of voer deze commands achter elkaar uit in de **serverconsole/txAdmin Live Console**:
+Bij een bestaande server: gebruik `refresh` na uploaden en plan een volledige serverherstart, omdat ook andere scripts van ts_bridge afhankelijk zijn. Er is geen SQL-migratie nodig. Plaats `fxmanifest.lua` rechtstreeks in iedere resource-map; vermijd dubbele submappen.
 
-```text
-refresh
-ensure ts_nohelmet
-```
+## Gebruik
 
-## 4. Controleren in het spel
+- Als de bestuurder uitstapt of doodgaat, schuif je niet automatisch door.
+- Gebruik `/schuif` vanaf de voorste passagiersstoel om zelf naar de bestuurdersstoel te gaan.
+- Of open je ox_lib-radiaalmenu en kies **Schuif naar bestuurder**.
+- De bestuurdersstoel moet vrij zijn. Ook een overleden bestuurder telt als bezet totdat die uit het voertuig is gehaald.
+- Dode/bewusteloze spelers kunnen niet schuiven. De bridge gebruikt hiervoor native doodstatus plus de geconfigureerde `DeadStateKeys`.
+- Je blijft afhankelijk van de bestaande voertuig-/sleutelscripts om te kunnen rijden.
+- Achterpassagiers worden niet naar voren geteleporteerd. De GTA-schuifanimatie moet door het voertuig worden ondersteund.
 
-1. Verbind met de server en gebruik een personage zonder helm.
-2. Wacht minimaal één seconde zodat de clientlus is uitgevoerd.
-3. Stap op een motor of scooter en wacht op het moment waarop GTA normaal een helm opzet.
-4. Controleer dat er geen automatische helm verschijnt.
-5. Herhaal na een respawn of personagewissel.
+## Configuratie
 
-Een bestaande helm wordt niet verwijderd. Verwijder die eerst via je kledingmenu als je de automatische helm wilt testen. Andere scripts kunnen een helm expliciet aantrekken of de GTA-helmfunctie weer inschakelen.
+| Instelling | Standaard | Betekenis |
+| --- | --- | --- |
+| `DisableAutomaticHelmet` | `true` | Automatische GTA-helm voorkomen |
+| `PreventAutoShuffle` | `true` | Automatisch doorschuiven voorkomen |
+| `ShuffleCommand` | `'schuif'` | Command zonder slash; `false` schakelt alleen het command uit |
+| `ShuffleTimeoutMs` | `8000` | Positieve duur in milliseconden voor een schuifpoging |
+| `Radial.Enabled` | `true` | Radiaaloptie aan/uit |
+| `Radial.Label` / `Radial.Icon` | Tekst / `chair` | Menunaam en Font Awesome-icoon |
+| `Messages` | Nederlands | Meldingen aanpassen |
 
-## 5. Versiecontrole instellen
+Herstart ts_nohelmet na wijzigingen. Schuiven kan ook handmatig wanneer de automatische blokkering is uitgezet.
 
-Standaard wordt één keer per resource-start de laatste stabiele release opgehaald. De checker gebruikt de `version` in `fxmanifest.lua` en vergelijkt de drie versiedelen numeriek: `1.0.10` is dus nieuwer dan `1.0.9`.
-
-Uitschakelen:
+Voor de optionele versiecontrole geldt dezelfde serverinstelling als in 1.0.1:
 
 ```cfg
 set ts_nohelmet_version_check 0
-ensure ts_nohelmet
 ```
 
-Weer inschakelen: verander `0` naar `1` en herstart de resource. Gebruik `set`, niet `setr`: de instelling is alleen voor de server.
+`0` = uit; `1` = aan. Plaats dit boven `ensure ts_nohelmet`. De checker meldt fouten alleen in de serverconsole en verandert geen bestanden.
 
-Consolemeldingen kunnen aangeven dat de versie actueel is, dat er een update beschikbaar is, of dat de lokale versie vooruitloopt op de gepubliceerde release. Bij een onbereikbare API, een HTTP-fout of ongeldige gegevens wordt alleen een melding geschreven. Na 15 seconden stopt de checker met wachten op een bruikbaar resultaat; een late reactie wordt genegeerd. Er volgt geen herhaalde polling.
+## Controle na installatie
 
-## 6. Updaten
+1. Test met twee spelers: één rijdt, één zit rechtsvoor. Laat de bestuurder uitstappen; de passagier moet blijven zitten.
+2. Herhaal met een overleden bestuurder. Zolang de stoel nog bezet is, mag `/schuif` niemand verwijderen. Haal de bestuurder uit het voertuig en controleer dat de passagier nog steeds blijft zitten.
+3. Gebruik `/schuif` en controleer de animatie naar de bestuurdersstoel.
+4. Herhaal via het radiaalmenu. De optie verdwijnt wanneer je bestuurder wordt, uitstapt of niet meer kunt schuiven.
+5. Test een bezette stoel, achterbank, doodstatus en herhaald commandgebruik.
+6. Test respawn/personagewissel en een resource-herstart. Controleer ook de automatische motorhelm.
 
-1. Maak een back-up van de bestaande resource en eventuele eigen wijzigingen.
-2. Voer `stop ts_nohelmet` uit in de serverconsole.
-3. Vervang de resourcebestanden door de nieuwe versie, inclusief de map `server`.
-4. Behoud je instelling in `server.cfg` en voorkom dubbele `ensure`-regels.
-5. Voer `refresh` en `ensure ts_nohelmet` uit.
-6. Controleer de serverconsole en herhaal de test in het spel.
+## Probleemoplossing
 
-Voor de update naar 1.0.1 is geen SQL-migratie nodig.
-
-## 7. Problemen oplossen
-
-| Probleem | Controle / oplossing |
+| Probleem | Controle |
 | --- | --- |
-| Resource wordt niet gevonden | Controleer de mapnaam, dubbele submappen en voer `refresh` uit. |
-| Serverbestand ontbreekt | Upload ook `server/version_check.lua`; alleen de client vervangen is niet voldoende. |
-| Automatische helm verschijnt toch | Controleer of de resource draait, wacht één seconde en controleer andere helm-/kledingscripts. |
-| Een bestaande helm blijft zichtbaar | Dat is verwacht: het script voorkomt automatisch opzetten en verwijdert geen accessoires. |
-| Geen publieke release gevonden / HTTP 404 | Controleer of de repository openbaar is en een stabiele release heeft. |
-| HTTP 403 of 429 | GitHub kan verzoeken beperken; probeer later opnieuw door de resource te herstarten. |
-| Netwerkfout of time-out | Controleer DNS, firewall en uitgaande HTTPS-toegang naar `api.github.com`. |
-| Geen versiecheckmelding | Controleer of `ts_nohelmet_version_check` op `0` staat en kijk in de serverconsole, niet F8. |
+| Geen radiaaloptie / export ontbreekt | Installeer ts_bridge 1.0.9+, controleer `Radial.Enabled` en of je rechtsvoor zit met een vrije bestuurdersstoel. |
+| Resource start niet | Controleer ox_lib, ts_bridge, de manifestbestanden en de startvolgorde. |
+| Dode speler kan toch schuiven | Controleer `DeadStateKeys` in de bridge voor jouw ambulancescript. |
+| Stoel is bezet | Haal de bestuurder eerst uit de auto; dit script doet dat niet automatisch. |
+| Schuiven mislukt | Voertuig ondersteunt mogelijk geen shuffle of een ander script onderbreekt de animatie. |
+| Automatisch schuiven gebeurt nog | Controleer `PreventAutoShuffle` en andere scripts die configflag 184 of stoelposities aanpassen. |
+| Een bestaande helm blijft staan | Verwacht: alleen automatisch opzetten wordt uitgeschakeld. |
+| Versiechecker meldt HTTP 404 / netwerkfout | Geen publieke release bereikbaar; gameplay blijft werken. |
 
-## 8. Uitschakelen / verwijderen
+## Verwijderen
 
-Verwijder `ensure ts_nohelmet` en stop de resource. De laatst ingestelde helmstatus kan op de huidige ped blijven staan; maak opnieuw verbinding om zonder deze resource te testen. Het script maakt geen databasegegevens aan.
+Stop ts_nohelmet en verwijder de `ensure`-regel. De eigen radiaaloptie wordt verwijderd en de eerder opgeslagen stoelvlag hersteld. Een helmstatus kan op de huidige ped blijven staan tot een herverbinding. Verwijder ts_bridge niet als andere resources die gebruiken.

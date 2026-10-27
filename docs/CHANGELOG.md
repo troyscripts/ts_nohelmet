@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.2
+
+- Automatische stoelwissel naar de bestuurder geblokkeerd.
+- `/schuif` toegevoegd voor de voorste passagier met een vrije bestuurdersstoel.
+- Contextafhankelijke radiaaloptie via ts_bridge toegevoegd.
+- ts_bridge 1.0.9+ vereist; configuratie toegevoegd in `config/config.lua`.
+- Controle op doodstatus, stoelbezetting, dubbele acties en een schuiftime-out.
+- Documentatie bijgewerkt; changelog blijft in `docs`.
+
 ## 1.0.1
 
 - Resourceversie, auteur en omschrijving toegevoegd aan `fxmanifest.lua`.
@@ -13,3 +22,4 @@
 ## 1.0.0
 
 - Eerste versie: automatische GTA V-helm uitschakelen via de client.
+
