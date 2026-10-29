@@ -1,6 +1,6 @@
 # Troy Scripts — ts_nohelmet
 
-**Versie 1.0.4** · FiveM voor GTA V
+**Versie 1.0.5** · FiveM voor GTA V
 
 Voorkomt de automatische motorhelm én het automatisch doorschuiven naar de bestuurdersstoel wanneer de bestuurder uitstapt of overlijdt. Passagiers blijven op hun eigen plek. Wil je zelf van voorstoel wisselen? Gebruik **`/schuif`** of **Wissel voorstoel** in het ox_lib-radiaalmenu, gekoppeld via ts_bridge.
 
@@ -72,3 +72,7 @@ Andere scripts die de helm of ped-configflag 184 overschrijven of stoelwissels a
 Problemen melden: [GitHub Issues](https://github.com/troyscripts/ts_nohelmet/issues). Vermeld beide scriptversies en de relevante consolemelding.
 
 Na terugschuiven naar de passagiersstoel wordt de automatische stoelblokkering direct hersteld. Je schuift dus niet vanzelf weer naar de bestuurdersstoel. Op voertuigen zonder geschikte schuifanimatie stopt de poging na de ingestelde time-out.
+
+### Radiaalreparatie
+
+Gebruik ts_bridge 1.1.1 of nieuwer voor de correctie van callbacks tussen resources. Bij een fout vermeldt F8 de geladen bridgeversie en de fout of afwijzing.

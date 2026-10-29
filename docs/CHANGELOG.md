@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5
+
+- Radiaalfouten tonen de werkelijke exportfout of afwijzing en de geladen bridgeversie.
+- Misleidend algemeen updateadvies verwijderd. Gebruik ts_bridge 1.1.1 voor de callbackfix.
+- Gameplay en configuratie ongewijzigd.
+
 ## 1.0.4
 
 - `/schuif` en radiaaloptie werken in beide richtingen tussen de twee voorstoelen.

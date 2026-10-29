@@ -1,4 +1,4 @@
-# Installatie — ts_nohelmet 1.0.4
+# Installatie — ts_nohelmet 1.0.5
 
 ## Benodigd
 
@@ -9,7 +9,7 @@ FiveM voor GTA V, ox_lib en **ts_bridge 1.0.9 of nieuwer**. Installeer de bridge
 1. Maak een back-up van beide resources en je eigen bridgeconfiguratie/webhooks.
 2. Stop `ts_nohelmet`.
 3. Installeer eerst de bridge-update. Het bridgeconfigschema blijft **0.0.8**; de bestanden in `config/` zijn niet gewijzigd en kunnen behouden blijven.
-4. Vervang ts_nohelmet door versie 1.0.4, inclusief de nieuwe map `config`.
+4. Vervang ts_nohelmet door versie 1.0.5, inclusief de nieuwe map `config`.
 5. Neem ook de bijgewerkte `ts_nohelmet/config/config.lua` over (aangepaste menutekst en meldingen) en zet je eigen instellingen terug.
 6. Start resources in deze volgorde:
 
@@ -66,7 +66,7 @@ set ts_nohelmet_version_check 0
 
 | Probleem | Controle |
 | --- | --- |
-| Geen radiaaloptie / export ontbreekt | Installeer ts_bridge 1.0.9+, controleer `Radial.Enabled` en of je op een voorstoel zit en de andere voorstoel vrij is. |
+| Geen radiaaloptie / export ontbreekt | Installeer ts_bridge 1.1.1+ (fix voor exportcallbacks), controleer `Radial.Enabled` en of je op een voorstoel zit en de andere voorstoel vrij is. |
 | Resource start niet | Controleer ox_lib, ts_bridge, de manifestbestanden en de startvolgorde. |
 | Dode speler kan toch schuiven | Controleer `DeadStateKeys` in de bridge voor jouw ambulancescript. |
 | Stoel is bezet | De andere voorstoel moet vrij zijn; dit script verwijdert geen inzittenden. |

@@ -83,7 +83,9 @@ local function updateRadial(wanted)
         radialVisible = wanted
         bridgeErrorShown = false
     elseif not bridgeErrorShown then
-        print('[ts_nohelmet] Radiaaloptie niet beschikbaar. Installeer ts_bridge 1.0.9 of nieuwer.')
+        local reason = ok and 'Registratie afgewezen; controleer bridge-callbackondersteuning en radiaalconfiguratie.' or tostring(result)
+        print(('[ts_nohelmet] Radiaaloptie niet beschikbaar (ts_bridge %s): %s'):format(
+            GetResourceMetadata('ts_bridge', 'version', 0) or 'onbekend', reason))
         bridgeErrorShown = true
     end
 end
