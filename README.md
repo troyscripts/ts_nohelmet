@@ -1,6 +1,6 @@
 # Troy Scripts — ts_nohelmet
 
-**Versie 1.0.5** · FiveM voor GTA V
+**Versie 1.0.6** · FiveM voor GTA V
 
 Voorkomt de automatische motorhelm én het automatisch doorschuiven naar de bestuurdersstoel wanneer de bestuurder uitstapt of overlijdt. Passagiers blijven op hun eigen plek. Wil je zelf van voorstoel wisselen? Gebruik **`/schuif`** of **Wissel voorstoel** in het ox_lib-radiaalmenu, gekoppeld via ts_bridge.
 
@@ -11,7 +11,7 @@ Voorkomt de automatische motorhelm én het automatisch doorschuiven naar de best
 - Handmatig met de GTA-animatie wisselen tussen de bestuurdersstoel en de voorste passagiersstoel, in beide richtingen.
 - De radiaaloptie verschijnt alleen wanneer schuiven beschikbaar is.
 - Controle op overlijden/laststand via ts_bridge, bezette stoel en instappen; maximaal één schuifpoging tegelijk.
-- Versiechecker: controleert één keer bij de resource-start op een nieuwe stabiele GitHub-release. Geen automatische installatie.
+- Versiechecker: controleert één keer bij de resource-start het publieke fxmanifest.lua op de GitHub-branch main. Geen automatische installatie.
 
 De andere voorstoel moet vrij zijn. Ook een overleden inzittende houdt die stoel bezet. Het script verwijdert of verplaatst geen andere spelers. Achterpassagiers kunnen niet met `/schuif` naar voren teleporteren. Het script geeft geen voertuigsleutels en verandert geen voertuigtoegang.
 
@@ -20,7 +20,7 @@ De andere voorstoel moet vrij zijn. Ook een overleden inzittende houdt die stoel
 | Onderdeel | Vereist |
 | --- | --- |
 | Werkende FiveM-server voor GTA V met actuele FXServer-artifacts | Ja |
-| ts_bridge 1.0.9 of nieuwer | Ja, resource-map moet `ts_bridge` heten |
+| ts_bridge 1.1.1 of nieuwer | Ja, resource-map moet `ts_bridge` heten |
 | ox_lib | Ja, voor ts_bridge en het radiaalmenu |
 | ESX / QBCore | Niet direct door ts_nohelmet; de bridge moet passend geconfigureerd zijn |
 | ox_target / ox_inventory / SQL | Geen directe dependency van ts_nohelmet |
@@ -54,7 +54,7 @@ De versiecheck kan via de serverconfig worden uitgezet, boven `ensure ts_nohelme
 set ts_nohelmet_version_check 0
 ```
 
-Zonder bereikbare publieke GitHub-release meldt de checker dit in de serverconsole; de gameplay blijft werken.
+De checker vergelijkt met de version-regel in het publieke fxmanifest.lua op main. Een GitHub Release is niet nodig. Netwerkfouten worden alleen in de console gemeld; de gameplay blijft werken.
 
 ## Bestanden
 
@@ -76,3 +76,5 @@ Na terugschuiven naar de passagiersstoel wordt de automatische stoelblokkering d
 ### Radiaalreparatie
 
 Gebruik ts_bridge 1.1.1 of nieuwer voor de correctie van callbacks tussen resources. Bij een fout vermeldt F8 de geladen bridgeversie en de fout of afwijzing.
+
+Versiecheckertests: `python3 tests/run_lua.py` (Python 3 en liblua5.4). De tests simuleren manifestantwoorden, HTTP-fouten, time-outs en uitgeschakelde controle.

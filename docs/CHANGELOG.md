@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.6 — 2026-11-05
+- Versiecontrole leest het publieke fxmanifest.lua op main; geen GitHub Release meer vereist.
+- Ontvangen manifest wordt uitsluitend als tekst gelezen, begrensd en op één geldige version-regel gecontroleerd.
+- Installatie-instructies gelijkgetrokken op ts_bridge 1.1.1+. Gameplay/config ongewijzigd.
+
 ## 1.0.5
 
 - Radiaalfouten tonen de werkelijke exportfout of afwijzing en de geladen bridgeversie.
