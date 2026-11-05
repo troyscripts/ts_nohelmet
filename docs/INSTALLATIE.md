@@ -1,16 +1,16 @@
-# Installatie — ts_nohelmet 1.0.5
+# Installatie — ts_nohelmet 1.0.6
 
 ## Benodigd
 
-FiveM voor GTA V, ox_lib en **ts_bridge 1.0.9 of nieuwer**. Installeer de bridge onder de resourcenaam `ts_bridge`, ook al heet de GitHub-repository `ts_brigde`. ts_nohelmet heeft zelf geen ESX-, inventory- of databasekoppeling. Houd voor de overige bridgefuncties de bestaande serverinstellingen aan.
+FiveM voor GTA V, ox_lib en **ts_bridge 1.1.1 of nieuwer**. Installeer de bridge onder de resourcenaam `ts_bridge`, ook al heet de GitHub-repository `ts_brigde`. ts_nohelmet heeft zelf geen ESX-, inventory- of databasekoppeling. Houd voor de overige bridgefuncties de bestaande serverinstellingen aan.
 
 ## Installeren / bijwerken
 
 1. Maak een back-up van beide resources en je eigen bridgeconfiguratie/webhooks.
 2. Stop `ts_nohelmet`.
-3. Installeer eerst de bridge-update. Het bridgeconfigschema blijft **0.0.8**; de bestanden in `config/` zijn niet gewijzigd en kunnen behouden blijven.
-4. Vervang ts_nohelmet door versie 1.0.5, inclusief de nieuwe map `config`.
-5. Neem ook de bijgewerkte `ts_nohelmet/config/config.lua` over (aangepaste menutekst en meldingen) en zet je eigen instellingen terug.
+3. Gebruik ts_bridge 1.1.1 of nieuwer. Bewaar je eigen bridgeconfiguratie en webhooks.
+4. Vervang ts_nohelmet door versie 1.0.6, inclusief de nieuwe map `config`.
+5. Bij deze update vanaf 1.0.5 blijft `config/config.lua` ongewijzigd; behoud je eigen instellingen.
 6. Start resources in deze volgorde:
 
 ```cfg
@@ -73,7 +73,7 @@ set ts_nohelmet_version_check 0
 | Schuiven mislukt | Voertuig ondersteunt mogelijk geen shuffle of een ander script onderbreekt de animatie. |
 | Automatisch schuiven gebeurt nog | Controleer `PreventAutoShuffle` en andere scripts die configflag 184 of stoelposities aanpassen. |
 | Een bestaande helm blijft staan | Verwacht: alleen automatisch opzetten wordt uitgeschakeld. |
-| Versiechecker meldt HTTP 404 / netwerkfout | Geen publieke release bereikbaar; gameplay blijft werken. |
+| Versiechecker meldt HTTP 404 / netwerkfout | Publiek manifest op main niet bereikbaar; gameplay blijft werken. |
 
 ## Verwijderen
 

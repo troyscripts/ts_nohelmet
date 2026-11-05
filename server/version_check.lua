@@ -1,6 +1,6 @@
 local resource = GetCurrentResourceName()
-local releasesUrl = 'https://github.com/troyscripts/ts_nohelmet/releases'
-local apiUrl = 'https://api.github.com/repos/troyscripts/ts_nohelmet/releases/latest'
+local repositoryUrl = 'https://github.com/troyscripts/ts_nohelmet'
+local apiUrl = 'https://api.github.com/repos/troyscripts/ts_nohelmet/contents/fxmanifest.lua?ref=main'
 
 local function log(message)
     print(('[%s] %s'):format(resource, message))
@@ -37,38 +37,46 @@ CreateThread(function()
 
         if status ~= 200 then
             if status == 404 then
-                log('Versiecontrole: geen publieke release gevonden. Controleer of de repository openbaar is en een stabiele release heeft.')
+                log('Versiecontrole: publiek fxmanifest.lua op main niet gevonden.')
             else
                 log(('Versiecontrole niet beschikbaar (HTTP %s). Het script blijft werken.'):format(tostring(status)))
             end
             return
         end
 
-        local ok, release = pcall(json.decode, body or '')
-        if not ok or type(release) ~= 'table' or release.draft or release.prerelease then
-            log('Versiecontrole: ongeldige releasegegevens ontvangen.')
+        if type(body) ~= 'string' or #body > 16384 then
+            log('Versiecontrole: ongeldig manifest ontvangen.')
             return
         end
-
-        local latest = parseVersion(release.tag_name)
+        -- Lees uitsluitend een volledige version-regel; voer de ontvangen Lua nooit uit.
+        local remote
+        for line in (body .. '\n'):gmatch('([^\r\n]*)[\r\n]') do
+            local value = line:match("^%s*version%s+'([vV]?%d+%.%d+%.%d+)'%s*$")
+                or line:match('^%s*version%s+"([vV]?%d+%.%d+%.%d+)"%s*$')
+            if value then
+                if remote then log('Versiecontrole: meerdere version-regels ontvangen.'); return end
+                remote = value
+            end
+        end
+        local latest = parseVersion(remote)
         if not latest then
-            log('Versiecontrole: de releasetag moet het formaat v1.0.1 of 1.0.1 hebben.')
+            log('Versiecontrole: geldige version-regel ontbreekt in het manifest.')
             return
         end
 
         for index = 1, 3 do
             if latest[index] > installed[index] then
-                log(('Update beschikbaar: %s -> %s. Download: %s'):format(current, release.tag_name, releasesUrl))
+                log(('Update beschikbaar: %s -> %s. Download: %s'):format(current, remote, repositoryUrl))
                 return
             elseif latest[index] < installed[index] then
-                log(('Lokale versie %s is nieuwer dan de laatste publieke release (%s).'):format(current, release.tag_name))
+                log(('Lokale versie %s is nieuwer dan het publieke manifest (%s).'):format(current, remote))
                 return
             end
         end
 
         log(('Versie %s is up-to-date.'):format(current))
     end, 'GET', '', {
-        ['Accept'] = 'application/vnd.github+json',
+        ['Accept'] = 'application/vnd.github.raw+json',
         ['User-Agent'] = 'TroyScripts-ts_nohelmet-version-check'
     })
 end)
