@@ -1,0 +1,63 @@
+name: ts_nohelmet — complete install package
+
+on:
+  push:
+    branches:
+      - build/complete-ts-nohelmet-1.0.6
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua 5.4
+        run: sudo apt-get update && sudo apt-get install -y lua5.4
+      - name: Check Lua syntax and regression
+        run: |
+          set -eu
+          find . -type f -name '*.lua' -print0 | while IFS= read -r -d '' file; do
+            luac5.4 -p "$file"
+          done
+          lua5.4 tests/version_check_spec.lua
+      - name: Verify public-manifest version checker
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          import re
+          manifest=Path('fxmanifest.lua').read_text()
+          assert re.search(r"version '1.0.6'",manifest)
+          code=Path('server/version_check.lua').read_text()
+          assert 'contents/fxmanifest.lua?ref=main' in code
+          assert 'releases/latest' not in code
+          assert 'version ' in code
+          PYTHON
+      - name: Package full resource
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          from zipfile import ZipFile,ZIP_DEFLATED
+          archive=Path('ts_nohelmet_1.0.6_compleet.zip')
+          with ZipFile(archive,'w',ZIP_DEFLATED) as zip:
+            for item in sorted(Path('.').rglob('*')):
+              if not item.is_file() or item==archive:
+                continue
+              if '.git' in item.parts or '.github' in item.parts or '__pycache__' in item.parts:
+                continue
+              zip.write(item,'ts_nohelmet/'+item.as_posix())
+          with ZipFile(archive,'r') as zip:
+            assert zip.testzip() is None
+            assert 'ts_nohelmet/server/version_check.lua' in zip.namelist()
+            assert 'ts_nohelmet/fxmanifest.lua' in zip.namelist()
+          print(archive,archive.stat().st_size)
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ts_nohelmet_1.0.6_compleet
+          path: ts_nohelmet_1.0.6_compleet.zip
+          if-no-files-found: error
+          retention-days: 30
