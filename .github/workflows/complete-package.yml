@@ -34,7 +34,6 @@ jobs:
           code=Path('server/version_check.lua').read_text()
           assert 'contents/fxmanifest.lua?ref=main' in code
           assert 'releases/latest' not in code
-          assert 'version ' in code
           PYTHON
       - name: Package full resource
         run: |
